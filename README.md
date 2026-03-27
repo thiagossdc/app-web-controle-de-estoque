@@ -5,11 +5,13 @@ Projeto full stack com backend em `.NET 10` e frontend em `Angular 19`, focado e
 ## Stack
 - Backend: ASP.NET Core Web API, EF Core, SQLite, JWT, RabbitMQ
 - Frontend: Angular 19, SCSS, Bootstrap, Chart.js
+- Admin Panel: Vue.js 3, Vite, Pinia, Tailwind CSS
 - Mensageria: RabbitMQ (`stock-events`)
 
 ## Estrutura
 - `src/Estoque.Api`: API RESTful e regras de negocio
-- `src/estoque-web`: aplicacao Angular
+- `src/estoque-web`: aplicacao Angular (frontend operacional)
+- `src/admin-panel`: painel administrativo Vue.js (gestão de cadastros)
 - `docs`: documentacao tecnica e guia de uso
 
 ## Como executar
@@ -18,12 +20,17 @@ Projeto full stack com backend em `.NET 10` e frontend em `Angular 19`, focado e
 2. API:
    - `dotnet restore src/Estoque.Api/Estoque.Api.csproj`
    - `dotnet run --project src/Estoque.Api/Estoque.Api.csproj`
-3. Frontend:
+3. Frontend Angular:
    - `cd src/estoque-web`
    - `npm install`
    - `npm start`
-4. Acesse:
-   - Frontend: `http://localhost:4200`
+4. Admin Panel Vue.js:
+   - `cd src/admin-panel`
+   - `npm install`
+   - `npm run dev`
+5. Acesse:
+   - Frontend Angular: `http://localhost:4200`
+   - Admin Panel Vue.js: `http://localhost:5177`
    - API OpenAPI: `http://localhost:5177/openapi/v1.json`
    - RabbitMQ UI: `http://localhost:15672` (`guest/guest`)
 
