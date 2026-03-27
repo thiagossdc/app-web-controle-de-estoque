@@ -1,0 +1,71 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="mb-1">Gestao de Estoque Corporativo</h3>
+      <small class="text-secondary">Painel operacional com controle em tempo real</small>
+    </div>
+    <span class="badge text-bg-dark">Conectado</span>
+  </div>
+
+  <ul class="nav nav-pills gap-2 mb-4">
+    <li class="nav-item"><button class="nav-link" [class.active]="activeTab==='dashboard'" (click)="setTab('dashboard')">Dashboard</button></li>
+    <li class="nav-item"><button class="nav-link" [class.active]="activeTab==='produtos'" (click)="setTab('produtos')">Produtos</button></li>
+    <li class="nav-item"><button class="nav-link" [class.active]="activeTab==='categorias'" (click)="setTab('categorias')">Categorias</button></li>
+    <li class="nav-item"><button class="nav-link" [class.active]="activeTab==='relatorios'" (click)="setTab('relatorios')">Relatorios</button></li>
+    <li class="nav-item"><button class="nav-link" [class.active]="activeTab==='configuracoes'" (click)="setTab('configuracoes')">Configuracoes</button></li>
+  </ul>
+
+  <section *ngIf="activeTab==='dashboard'" class="row g-3">
+    <div class="col-md-3"><div class="card kpi"><h6>Total de produtos</h6><h4>{{dashboard?.totalProducts || 0}}</h4></div></div>
+    <div class="col-md-3"><div class="card kpi"><h6>Total de categorias</h6><h4>{{dashboard?.totalCategories || 0}}</h4></div></div>
+    <div class="col-md-3"><div class="card kpi"><h6>Estoque baixo</h6><h4>{{dashboard?.lowStockProducts || 0}}</h4></div></div>
+    <div class="col-md-3"><div class="card kpi"><h6>Mov. 30 dias</h6><h4>{{dashboard?.transactionsLast30Days || 0}}</h4></div></div>
+    <div class="col-12"><div class="card p-3"><h6>Fluxo diario de entradas e saidas</h6><canvas baseChart [data]="chartData" [type]="'bar'"></canvas></div></div>
+  </section>
+
+  <section *ngIf="activeTab==='produtos'" class="row g-3">
+    <div class="col-lg-4"><div class="card p-3"><h6>Novo produto</h6>
+      <input class="form-control mb-2" [(ngModel)]="productForm.name" placeholder="Nome">
+      <input class="form-control mb-2" [(ngModel)]="productForm.sku" placeholder="SKU">
+      <select class="form-select mb-2" [(ngModel)]="productForm.categoryId"><option *ngFor="let c of categories" [ngValue]="c.id">{{c.name}}</option></select>
+      <select class="form-select mb-2" [(ngModel)]="productForm.supplierId"><option *ngFor="let s of suppliers" [ngValue]="s.id">{{s.name}}</option></select>
+      <input class="form-control mb-2" type="number" [(ngModel)]="productForm.unitPrice" placeholder="Preco unitario">
+      <input class="form-control mb-2" type="number" [(ngModel)]="productForm.minStock" placeholder="Estoque minimo">
+      <button class="btn btn-dark" (click)="createProduct()">Salvar</button>
+    </div></div>
+    <div class="col-lg-8"><div class="card p-3"><h6>Lista de produtos</h6>
+      <table class="table table-sm"><thead><tr><th>Nome</th><th>SKU</th><th>Categoria</th><th>Estoque</th></tr></thead>
+      <tbody><tr *ngFor="let p of products"><td>{{p.name}}</td><td>{{p.sku}}</td><td>{{p.category?.name}}</td><td>{{p.currentStock}}</td></tr></tbody></table>
+    </div></div>
+  </section>
+
+  <section *ngIf="activeTab==='categorias'" class="row g-3">
+    <div class="col-lg-4"><div class="card p-3"><h6>Nova categoria</h6>
+      <input class="form-control mb-2" [(ngModel)]="categoryForm.name" placeholder="Nome">
+      <textarea class="form-control mb-2" [(ngModel)]="categoryForm.description" placeholder="Descricao"></textarea>
+      <button class="btn btn-dark" (click)="createCategory()">Salvar</button>
+    </div></div>
+    <div class="col-lg-8"><div class="card p-3"><h6>Categorias cadastradas</h6>
+      <ul class="list-group"><li class="list-group-item" *ngFor="let c of categories">{{c.name}} - {{c.description}}</li></ul>
+    </div></div>
+  </section>
+
+  <section *ngIf="activeTab==='relatorios'" class="row g-3">
+    <div class="col-lg-4"><div class="card p-3"><h6>Registrar movimentacao</h6>
+      <select class="form-select mb-2" [(ngModel)]="transactionForm.productId"><option *ngFor="let p of products" [ngValue]="p.id">{{p.name}}</option></select>
+      <select class="form-select mb-2" [(ngModel)]="transactionForm.type"><option [ngValue]="1">Entrada</option><option [ngValue]="2">Saida</option><option [ngValue]="3">Ajuste</option></select>
+      <input class="form-control mb-2" type="number" [(ngModel)]="transactionForm.quantity" placeholder="Quantidade">
+      <input class="form-control mb-2" [(ngModel)]="transactionForm.reason" placeholder="Motivo">
+      <button class="btn btn-dark" (click)="registerTransaction()">Confirmar</button>
+    </div></div>
+    <div class="col-lg-8"><div class="card p-3"><h6>Historico de movimentacoes</h6>
+      <table class="table table-sm"><thead><tr><th>Produto</th><th>Tipo</th><th>Qtd</th><th>Data</th></tr></thead>
+      <tbody><tr *ngFor="let t of transactions"><td>{{t.product?.name}}</td><td>{{t.type}}</td><td>{{t.quantity}}</td><td>{{t.createdAtUtc | date:'short'}}</td></tr></tbody></table>
+    </div></div>
+  </section>
+
+  <section *ngIf="activeTab==='configuracoes'" class="row g-3">
+    <div class="col-lg-6"><div class="card p-3"><h6>Usuario logado</h6><p class="mb-1">{{login.email}}</p><small class="text-secondary">Use credenciais de admin para cadastros e funcionario para operacoes do dia a dia.</small></div></div>
+    <div class="col-lg-6"><div class="card p-3"><h6>Notificacoes em tempo real</h6><ul class="list-group"><li class="list-group-item" *ngFor="let n of notifications">{{n}}</li></ul></div></div>
+  </section>
+</div>

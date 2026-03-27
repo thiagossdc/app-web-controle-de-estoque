@@ -1,0 +1,35 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f3f6fb;
+  color: #1e293b;
+}
+
+.card {
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
+}
+
+.kpi {
+  padding: 1rem;
+}
+
+.kpi h6 {
+  color: #64748b;
+  margin-bottom: 0.4rem;
+}
+
+.kpi h4 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.nav-pills .nav-link {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.nav-pills .nav-link.active {
+  background: #0f172a;
+}
