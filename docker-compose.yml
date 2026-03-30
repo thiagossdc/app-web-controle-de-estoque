@@ -1,4 +1,22 @@
+version: '3.8'
+
 services:
+  # Banco de dados PostgreSQL (opcional - pode usar SQLite)
+  postgres:
+    image: postgres:15-alpine
+    container_name: estoque-postgres
+    environment:
+      POSTGRES_DB: estoque
+      POSTGRES_USER: estoque_user
+      POSTGRES_PASSWORD: estoque_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - estoque-network
+
+  # RabbitMQ para mensageria
   rabbitmq:
     image: rabbitmq:3-management
     container_name: estoque-rabbitmq
@@ -8,3 +26,85 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - estoque-network
+
+  # API .NET
+  api:
+    build:
+      context: ./src/Estoque.Api
+      dockerfile: Dockerfile
+    container_name: estoque-api
+    ports:
+      - "5177:5177"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=estoque.db
+      - Jwt__Key=${JWT_KEY:-ESTOQUE_SUPER_CHAVE_2026_SEGURA_123456}
+      - Jwt__Issuer=Estoque.Api
+      - Jwt__Audience=Estoque.Web
+      - RabbitMq__HostName=rabbitmq
+      - RabbitMq__Port=5672
+      - RabbitMq__UserName=guest
+      - RabbitMq__Password=guest
+      - RabbitMq__QueueName=stock-events
+    depends_on:
+      - rabbitmq
+    volumes:
+      - api_data:/app/data
+    networks:
+      - estoque-network
+
+  # Frontend Angular
+  frontend:
+    build:
+      context: ./src/estoque-web
+      dockerfile: Dockerfile
+    container_name: estoque-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+    networks:
+      - estoque-network
+
+  # Admin Panel Vue.js
+  admin-panel:
+    build:
+      context: ./src/admin-panel
+      dockerfile: Dockerfile
+    container_name: estoque-admin-panel
+    ports:
+      - "3001:80"
+    depends_on:
+      - api
+    networks:
+      - estoque-network
+
+  # Nginx para proxy reverso (opcional)
+  nginx:
+    image: nginx:alpine
+    container_name: estoque-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - api
+      - frontend
+      - admin-panel
+    networks:
+      - estoque-network
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  api_data:
+
+networks:
+  estoque-network:
+    driver: bridge

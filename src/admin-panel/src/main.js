@@ -28,6 +28,23 @@ const router = createRouter({
   routes
 })
 
+// Navigation guard para verificar autenticação
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+  const userStr = localStorage.getItem('user')
+  const user = userStr ? JSON.parse(userStr) : null
+  
+  if (to.meta.requiresAuth && !token) {
+    next('/login')
+  } else if (to.meta.requiresAdmin && user?.role !== 1) {
+    next('/')
+  } else if (to.path === '/login' && token) {
+    next('/')
+  } else {
+    next()
+  }
+})
+
 const app = createApp(App)
 const pinia = createPinia()
 

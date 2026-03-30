@@ -4,7 +4,13 @@
       <h3 class="mb-1">Gestao de Estoque Corporativo</h3>
       <small class="text-secondary">Painel operacional com controle em tempo real</small>
     </div>
-    <span class="badge text-bg-dark">Conectado</span>
+    <div class="d-flex align-items-center gap-3">
+      <span class="badge text-bg-success">Conectado</span>
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-secondary">{{user?.name}}</span>
+        <button class="btn btn-outline-danger btn-sm" (click)="logout()">Sair</button>
+      </div>
+    </div>
   </div>
 
   <ul class="nav nav-pills gap-2 mb-4">
@@ -65,7 +71,7 @@
   </section>
 
   <section *ngIf="activeTab==='configuracoes'" class="row g-3">
-    <div class="col-lg-6"><div class="card p-3"><h6>Usuario logado</h6><p class="mb-1">{{login.email}}</p><small class="text-secondary">Use credenciais de admin para cadastros e funcionario para operacoes do dia a dia.</small></div></div>
+    <div class="col-lg-6"><div class="card p-3"><h6>Usuario logado</h6><p class="mb-1">{{user?.email}}</p><small class="text-secondary">Use credenciais de admin para cadastros e funcionario para operacoes do dia a dia.</small></div></div>
     <div class="col-lg-6"><div class="card p-3"><h6>Notificacoes em tempo real</h6><ul class="list-group"><li class="list-group-item" *ngFor="let n of notifications">{{n}}</li></ul></div></div>
   </section>
 </div>

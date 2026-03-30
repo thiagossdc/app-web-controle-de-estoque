@@ -2,11 +2,16 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 
 export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    user: null,
-    token: localStorage.getItem('token'),
-    isAuthenticated: !!localStorage.getItem('token')
-  }),
+  state: () => {
+    const token = localStorage.getItem('token')
+    const userStr = localStorage.getItem('user')
+    const user = userStr ? JSON.parse(userStr) : null
+    return {
+      user: user,
+      token: token,
+      isAuthenticated: !!token
+    }
+  },
   
   actions: {
     async login(email, password) {
@@ -32,6 +37,7 @@ export const useAuthStore = defineStore('auth', {
       this.user = null
       this.isAuthenticated = false
       localStorage.removeItem('token')
+      localStorage.removeItem('user')
     },
     
     checkAuth() {

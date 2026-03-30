@@ -1,56 +1,43 @@
 <template>
-  <div>
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold text-gray-900">Gestão de Usuários</h2>
-      <button
-        @click="showCreateModal = true"
-        class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
-      >
+  <div class="users-container">
+    <div class="page-header">
+      <h2 class="page-title">Gestão de Usuários</h2>
+      <button @click="showCreateModal = true" class="btn-primary">
         Novo Usuário
       </button>
     </div>
 
     <!-- Users Table -->
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+    <div class="data-table">
+      <div class="table-header">
+        <h3 class="table-title">Lista de Usuários</h3>
+      </div>
+      <table>
+        <thead>
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Nome
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Email
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Perfil
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Ações
-            </th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Perfil</th>
+            <th>Ações</th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody>
           <tr v-for="user in users" :key="user.id">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-              {{ user.name }}
+            <td class="user-name">{{ user.name }}</td>
+            <td class="user-email">{{ user.email }}</td>
+            <td class="user-role">
+              <span :class="user.role === 1 ? 'badge-admin' : 'badge-user'">
+                {{ user.role === 1 ? 'Administrador' : 'Funcionário' }}
+              </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ user.email }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ user.role === 1 ? 'Administrador' : 'Funcionário' }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-              <button
-                @click="editUser(user)"
-                class="text-indigo-600 hover:text-indigo-900"
-              >
+            <td class="action-buttons">
+              <button @click="editUser(user)" class="btn-edit">
                 Editar
               </button>
               <button
                 v-if="user.id !== authStore.user?.id"
                 @click="deleteUser(user.id)"
-                class="text-red-600 hover:text-red-900"
+                class="btn-delete"
               >
                 Excluir
               </button>
@@ -224,3 +211,258 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.users-container {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.data-table {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.table-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  padding: 12px 24px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+td {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.user-email {
+  color: #64748b;
+}
+
+.user-role {
+  text-align: center;
+}
+
+.badge-admin {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-user {
+  background: #e2e8f0;
+  color: #334155;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit {
+  background: #f1f5f9;
+  color: #334155;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-edit:hover {
+  background: #e2e8f0;
+}
+
+.btn-delete {
+  background: #fef2f2;
+  color: #dc2626;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-delete:hover {
+  background: #fee2e2;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  color: #334155;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+.btn-primary-modal {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary-modal:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+</style>

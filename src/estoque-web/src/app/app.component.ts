@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
+import { Router } from '@angular/router';
 
 type Tab = 'dashboard' | 'produtos' | 'categorias' | 'relatorios' | 'configuracoes';
 
@@ -14,10 +15,11 @@ type Tab = 'dashboard' | 'produtos' | 'categorias' | 'relatorios' | 'configuraco
 })
 export class AppComponent implements OnInit {
   private readonly http = inject(HttpClient);
-  private readonly apiBase = 'http://localhost:5177/api';
+  private readonly router = inject(Router);
+  private readonly apiBase = '/api';
   activeTab: Tab = 'dashboard';
   token = '';
-  login = { email: 'admin@estoque.com', password: 'Admin@123' };
+  user: any = null;
   dashboard: any = null;
   products: any[] = [];
   categories: any[] = [];
@@ -38,17 +40,28 @@ export class AppComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.authenticate();
+    this.checkAuth();
   }
 
-  authenticate(): void {
-    this.http.post<any>(`${this.apiBase}/auth/login`, this.login).subscribe({
-      next: (res) => {
-        this.token = res.accessToken;
-        this.loadAll();
-        this.startNotificationStream();
-      }
-    });
+  checkAuth(): void {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (!token || !user) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    
+    this.token = token;
+    this.user = JSON.parse(user);
+    this.loadAll();
+    this.startNotificationStream();
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.router.navigate(['/login']);
   }
 
   setTab(tab: Tab): void {
