@@ -85,7 +85,7 @@ public class StructuredLoggingService : IStructuredLoggingService
         logData["eventName"] = eventName;
         logData["durationMs"] = durationMs;
         
-        if (durationMs > 1000) // Log as warning if slow
+        if (durationMs > 1000) // Log como aviso se lento
         {
             _logger.LogWarning("{StructuredLog}", JsonSerializer.Serialize(logData, _jsonOptions));
         }
@@ -114,7 +114,7 @@ public class StructuredLoggingService : IStructuredLoggingService
     }
 }
 
-// Extension methods for easy logging
+// Métodos de extensão para logging fácil
 public static class LoggingExtensions
 {
     public static void LogUserAction(this IStructuredLoggingService logger, string action, int userId, object? data = null)

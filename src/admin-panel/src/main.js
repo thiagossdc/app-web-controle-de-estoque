@@ -28,7 +28,7 @@ const router = createRouter({
   routes
 })
 
-// Navigation guard para verificar autenticação
+// Guarda de navegação para verificar autenticação
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   const userStr = localStorage.getItem('user')

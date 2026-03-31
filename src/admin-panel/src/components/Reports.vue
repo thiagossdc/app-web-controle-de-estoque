@@ -138,17 +138,17 @@ export default {
         const products = productsResponse.data
         this.recentMovements = movementsResponse.data
         
-        // Calculate summary
+        // Calcular resumo
         this.summary.totalProducts = products.length
         this.summary.lowStockProducts = products.filter(p => p.currentStock <= p.minStock).length
         this.summary.totalValue = products.reduce((total, product) => {
           return total + (product.currentStock * product.unitPrice)
         }, 0)
         
-        // Get low stock products
+        // Obter produtos com estoque baixo
         this.lowStockProducts = products
           .filter(p => p.currentStock <= p.minStock)
-          .slice(0, 6) // Show only first 6
+          .slice(0, 6) // Mostrar apenas os primeiros 6
       } catch (error) {
         console.error('Erro ao carregar relatórios:', error)
       }

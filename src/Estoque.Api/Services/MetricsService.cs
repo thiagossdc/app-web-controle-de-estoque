@@ -18,18 +18,18 @@ public class MetricsService : IMetricsService
     private readonly ILogger<MetricsService> _logger;
     private readonly Meter _meter;
     
-    // Counters
+    // Contadores
     private readonly Counter<long> _requestCounter;
     private readonly Counter<long> _cacheHitCounter;
     private readonly Counter<long> _cacheMissCounter;
     private readonly Counter<long> _databaseQueryCounter;
     private readonly Counter<long> _rabbitMqMessageCounter;
     
-    // Histograms
+    // Histogramas
     private readonly Histogram<double> _requestDuration;
     private readonly Histogram<double> _databaseQueryDuration;
     
-    // Gauges
+    // Medidores
     private readonly ObservableGauge<int> _activeConnections;
     private int _activeConnectionCount = 0;
 
@@ -38,18 +38,18 @@ public class MetricsService : IMetricsService
         _logger = logger;
         _meter = new Meter("Estoque.Api");
         
-        // Initialize counters
-        _requestCounter = _meter.CreateCounter<long>("http_requests_total", "requests", "Total HTTP requests");
-        _cacheHitCounter = _meter.CreateCounter<long>("cache_hits_total", "hits", "Total cache hits");
-        _cacheMissCounter = _meter.CreateCounter<long>("cache_misses_total", "misses", "Total cache misses");
-        _databaseQueryCounter = _meter.CreateCounter<long>("database_queries_total", "queries", "Total database queries");
-        _rabbitMqMessageCounter = _meter.CreateCounter<long>("rabbitmq_messages_total", "messages", "Total RabbitMQ messages");
+        // Inicializar contadores
+        _requestCounter = _meter.CreateCounter<long>("http_requests_total", "requests", "Total de requisições HTTP");
+        _cacheHitCounter = _meter.CreateCounter<long>("cache_hits_total", "hits", "Total de acertos de cache");
+        _cacheMissCounter = _meter.CreateCounter<long>("cache_misses_total", "misses", "Total de falhas de cache");
+        _databaseQueryCounter = _meter.CreateCounter<long>("database_queries_total", "queries", "Total de consultas ao banco");
+        _rabbitMqMessageCounter = _meter.CreateCounter<long>("rabbitmq_messages_total", "messages", "Total de mensagens RabbitMQ");
         
-        // Initialize histograms
-        _requestDuration = _meter.CreateHistogram<double>("http_request_duration_ms", "ms", "HTTP request duration");
-        _databaseQueryDuration = _meter.CreateHistogram<double>("database_query_duration_ms", "ms", "Database query duration");
+        // Inicializar histogramas
+        _requestDuration = _meter.CreateHistogram<double>("http_request_duration_ms", "ms", "Duração da requisição HTTP");
+        _databaseQueryDuration = _meter.CreateHistogram<double>("database_query_duration_ms", "ms", "Duração da consulta ao banco");
         
-        // Initialize gauges
+        // Inicializar medidores
         _activeConnections = _meter.CreateObservableGauge<int>("active_connections", () => _activeConnectionCount);
     }
 
@@ -150,7 +150,7 @@ public class MetricsMiddleware
             
             _metricsService.RecordRequestDuration(path, method, statusCode, stopwatch.ElapsedMilliseconds);
             
-            if (stopwatch.ElapsedMilliseconds > 1000) // Log slow requests
+            if (stopwatch.ElapsedMilliseconds > 1000) // Log de requisições lentas
             {
                 _logger.LogWarning("Slow request: {Method} {Path} - {StatusCode} - {Duration}ms", 
                     method, path, statusCode, stopwatch.ElapsedMilliseconds);

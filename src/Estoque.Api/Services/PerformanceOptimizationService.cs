@@ -87,7 +87,7 @@ public class PerformanceOptimizationService : IPerformanceOptimizationService
     {
         _logger.LogInformation("Starting cache preload...");
         
-        // Preload common data
+        // Pré-carregar dados comuns
         var preloadTasks = new List<Task>
         {
             PreloadCategoriesAsync(),
@@ -145,25 +145,25 @@ public class PerformanceOptimizationService : IPerformanceOptimizationService
 
     private int GetActiveConnections()
     {
-        // This would typically come from your connection pool or metrics service
+        // Normalmente viria do pool de conexões ou serviço de métricas
         return Environment.ProcessorCount * 2;
     }
 
     private async Task PreloadCategoriesAsync()
     {
-        // Implementation would depend on your data access layer
+        // Implementação depende da camada de acesso a dados
         await Task.Delay(100); // Placeholder
     }
 
     private async Task PreloadSuppliersAsync()
     {
-        // Implementation would depend on your data access layer
+        // Implementação depende da camada de acesso a dados
         await Task.Delay(100); // Placeholder
     }
 
     private async Task PreloadDashboardDataAsync()
     {
-        // Implementation would depend on your data access layer
+        // Implementação depende da camada de acesso a dados
         await Task.Delay(100); // Placeholder
     }
 }

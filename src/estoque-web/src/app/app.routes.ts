@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-// Auth guard function
+// Função de guarda de autenticação
 const authGuard = () => {
   const router = inject(Router);
   const token = localStorage.getItem('token');
@@ -15,7 +15,7 @@ const authGuard = () => {
   return false;
 };
 
-// Login guard function (redirect to dashboard if already logged in)
+// Função de guarda de login (redireciona para dashboard se já logado)
 const loginGuard = () => {
   const router = inject(Router);
   const token = localStorage.getItem('token');
