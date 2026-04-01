@@ -1,3 +1,4 @@
+using Estoque.Api.Interfaces;
 using Estoque.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,11 +32,11 @@ public class HealthController : ControllerBase
     }
 
     [HttpGet("metrics")]
-    public IActionResult GetMetrics()
+    public async Task<IActionResult> GetMetrics()
     {
         _logger.LogDebug("Métricas solicitadas");
         
-        var metrics = _metricsService.GetMetrics();
+        var metrics = await _metricsService.GetMetricsAsync();
         return Ok(metrics);
     }
 

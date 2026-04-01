@@ -1,7 +1,12 @@
 using System.Text;
 using Estoque.Api.Data;
+using Estoque.Api.Interfaces;
 using Estoque.Api.Middleware;
+using Estoque.Api.Repositories.Implementations;
+using Estoque.Api.Repositories.Interfaces;
 using Estoque.Api.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -16,6 +21,14 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Repositories
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IStockTransactionRepository, StockTransactionRepository>();
+
+// Services
 builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddSingleton<RabbitMqPublisher>();
 builder.Services.AddSingleton<NotificationBroadcastService>();
@@ -26,9 +39,7 @@ if (!builder.Environment.IsEnvironment("Testing"))
 builder.Services.AddScoped<InventoryService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<ICacheService, MemoryCacheService>();
-builder.Services.AddSingleton<IMetricsService, MetricsService>();
-builder.Services.AddScoped<IStructuredLoggingService, StructuredLoggingService>();
-builder.Services.AddSingleton<IPerformanceOptimizationService, PerformanceOptimizationService>();
+builder.Services.AddScoped<IMetricsService, MetricsService>();
 
 // Configuração JWT com validação de chave
 var jwtKey = builder.Configuration["Jwt:Key"];

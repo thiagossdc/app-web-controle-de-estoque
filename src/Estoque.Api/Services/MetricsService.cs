@@ -1,17 +1,8 @@
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using Estoque.Api.Interfaces;
 
 namespace Estoque.Api.Services;
-
-public interface IMetricsService
-{
-    void RecordRequestDuration(string endpoint, string method, int statusCode, double durationMs);
-    void RecordCacheHit(string key);
-    void RecordCacheMiss(string key);
-    void RecordDatabaseQuery(string query, double durationMs);
-    void RecordRabbitMqMessage(string queue, string operation);
-    Dictionary<string, object> GetMetrics();
-}
 
 public class MetricsService : IMetricsService
 {
@@ -117,6 +108,27 @@ public class MetricsService : IMetricsService
     public void DecrementActiveConnections()
     {
         Interlocked.Decrement(ref _activeConnectionCount);
+    }
+
+    public void IncrementRequestCount(string endpoint, string method, int statusCode)
+    {
+        var tags = new TagList
+        {
+            { "endpoint", endpoint },
+            { "method", method },
+            { "status_code", statusCode }
+        };
+        
+        _requestCounter.Add(1, tags);
+        _logger.LogDebug("Request count incremented for {Method} {Endpoint} - {StatusCode}", 
+            method, endpoint, statusCode);
+    }
+
+    public Task<string> GetMetricsAsync()
+    {
+        var metrics = GetMetrics();
+        var json = System.Text.Json.JsonSerializer.Serialize(metrics);
+        return Task.FromResult(json);
     }
 }
 

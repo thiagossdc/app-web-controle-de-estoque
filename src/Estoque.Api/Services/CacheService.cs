@@ -1,14 +1,7 @@
 using Microsoft.Extensions.Caching.Memory;
+using Estoque.Api.Interfaces;
 
 namespace Estoque.Api.Services;
-
-public interface ICacheService
-{
-    Task<T?> GetAsync<T>(string key);
-    Task SetAsync<T>(string key, T value, TimeSpan? expiration = null);
-    Task RemoveAsync(string key);
-    Task RemoveByPrefixAsync(string prefix);
-}
 
 public class MemoryCacheService : ICacheService
 {
@@ -22,14 +15,14 @@ public class MemoryCacheService : ICacheService
         _logger = logger;
     }
 
-    public Task<T?> GetAsync<T>(string key)
+    public Task<T?> GetAsync<T>(string key) where T : class
     {
         _logger.LogDebug("Buscando cache para chave: {Key}", key);
         var value = _cache.Get<T>(key);
         return Task.FromResult(value);
     }
 
-    public Task SetAsync<T>(string key, T value, TimeSpan? expiration = null)
+    public Task SetAsync<T>(string key, T value, TimeSpan? expiration = null) where T : class
     {
         var options = new MemoryCacheEntryOptions();
         
